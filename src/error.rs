@@ -5,6 +5,11 @@ use std::fmt;
 pub enum Error {
     /// An adapter failed to start, connect, or send a message.
     Adapter(String),
+    /// The operation is not supported by the source adapter.
+    Unsupported {
+        operation: &'static str,
+        adapter: String,
+    },
     /// A handler returned an error.
     Handler(String),
     /// An internal runtime task failed or exited unexpectedly.
@@ -15,6 +20,9 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Adapter(message) => write!(f, "adapter error: {message}"),
+            Self::Unsupported { operation, adapter } => {
+                write!(f, "{adapter} does not support {operation}")
+            }
             Self::Handler(message) => write!(f, "handler error: {message}"),
             Self::Runtime(message) => write!(f, "runtime error: {message}"),
         }

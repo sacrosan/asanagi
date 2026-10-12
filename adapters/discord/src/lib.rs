@@ -42,6 +42,7 @@ use tokio::sync::RwLock;
 use asanagi::{
     Error, Result,
     adapter::{Adapter, EventSender},
+    capabilities::Capabilities,
     model::{Attachment, Event, Message, User},
 };
 
@@ -134,6 +135,17 @@ impl Adapter for DiscordAdapter {
             .get()
             .cloned()
             .unwrap_or_else(|| User::new("discord-bot").with_is_bot(true))
+    }
+
+    fn capabilities(&self) -> Capabilities {
+        Capabilities::from_capabilities(&[
+            Capabilities::SEND_MESSAGES,
+            Capabilities::EDIT_MESSAGES,
+            Capabilities::DELETE_MESSAGES,
+            Capabilities::ADD_REACTIONS,
+            Capabilities::REMOVE_REACTIONS,
+            Capabilities::BROADCAST_TYPING,
+        ])
     }
 
     async fn start(&self, events: EventSender) -> Result<()> {

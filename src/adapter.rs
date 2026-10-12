@@ -3,6 +3,7 @@ use tokio::sync::mpsc;
 
 use crate::{
     Result,
+    capabilities::Capabilities,
     model::{Event, Message, User},
 };
 
@@ -23,6 +24,12 @@ pub trait Adapter: Send + Sync {
 
     /// The bot account represented by this adapter.
     fn self_user(&self) -> User;
+
+    /// Features supported by this adapter.
+    ///
+    /// Adapters should return the set of operations they genuinely implement,
+    /// not merely those available on the underlying platform.
+    fn capabilities(&self) -> Capabilities;
 
     /// Connect and forward events to `events` until the connection ends.
     ///

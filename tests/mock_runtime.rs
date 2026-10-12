@@ -59,3 +59,41 @@ async fn dispatches_messages_and_supports_replies() {
     assert_eq!(sent[0].content, "hello");
     assert_eq!(sent[0].channel_id, "channel");
 }
+
+#[test]
+fn capabilities_report_supported_operations() {
+    let send_and_edit = asanagi::Capabilities::from_capabilities(&[
+        asanagi::Capabilities::SEND_MESSAGES,
+        asanagi::Capabilities::EDIT_MESSAGES,
+    ]);
+
+    assert!(send_and_edit.contains(asanagi::Capabilities::SEND_MESSAGES));
+    assert!(!send_and_edit.contains(asanagi::Capabilities::DELETE_MESSAGES));
+    assert_eq!(send_and_edit.iter().count(), 2);
+    assert_eq!(send_and_edit.to_string(), "edit_messages, send_messages");
+    assert_eq!(
+        asanagi::Capabilities::parse("send_messages, edit_messages"),
+        send_and_edit
+    );
+    assert_eq!(asanagi::Capabilities::NONE.to_string(), "none");
+}
+
+#[tokio::test]
+async fn context_exposes_adapter_capabilities() {
+    let (adapter, handle) = MockAdapter::new("test");
+    let bot = Bot::new(adapter).handler(Echo {
+        calls: Arc::new(AtomicUsize::new(0)),
+    });
+    let runtime = tokio::spawn(async move { bot.run().await });
+
+    handle
+        .deliver(Event::Connected(User::new("bot")))
+        .await
+        .unwrap();
+    let capabilities = handle.sent().await.len();
+
+    drop(handle);
+    runtime.await.unwrap().unwrap();
+
+    assert_eq!(capabilities, 0);
+}

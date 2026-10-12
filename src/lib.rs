@@ -30,6 +30,7 @@
 
 pub mod adapter;
 pub mod bot;
+pub mod capabilities;
 pub mod context;
 pub mod error;
 pub mod handler;
@@ -38,6 +39,7 @@ pub mod model;
 
 pub use adapter::{Adapter, EventSender};
 pub use bot::Bot;
+pub use capabilities::Capabilities;
 pub use context::Context;
 pub use error::{Error, Result};
 pub use handler::Handler;
@@ -47,6 +49,7 @@ pub use model::{Attachment, Channel, ChannelKind, Event, Message, User};
 pub mod prelude {
     pub use crate::adapter::{Adapter, EventSender};
     pub use crate::bot::Bot;
+    pub use crate::capabilities::Capabilities;
     pub use crate::context::Context;
     pub use crate::error::{Error, Result};
     pub use crate::handler::Handler;

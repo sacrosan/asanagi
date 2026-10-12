@@ -3,6 +3,7 @@ use std::sync::Arc;
 use crate::{
     Result,
     adapter::Adapter,
+    capabilities::Capabilities,
     model::{Message, User},
 };
 
@@ -23,6 +24,16 @@ impl Context {
 
     pub fn self_user(&self) -> User {
         self.adapter.self_user()
+    }
+
+    /// Features supported by the source adapter.
+    pub fn capabilities(&self) -> Capabilities {
+        self.adapter.capabilities()
+    }
+
+    /// Whether the source adapter supports every capability in `required`.
+    pub fn supports(&self, required: Capabilities) -> bool {
+        self.adapter.capabilities().contains(required)
     }
 
     /// Send a message to a channel.

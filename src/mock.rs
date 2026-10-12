@@ -6,6 +6,7 @@ use tokio::sync::{Mutex, mpsc};
 use crate::{
     Error, Result,
     adapter::{Adapter, EventSender},
+    capabilities::Capabilities,
     model::{Event, Message, User},
 };
 
@@ -13,6 +14,7 @@ use crate::{
 pub struct MockAdapter {
     name: String,
     self_user: User,
+    capabilities: Capabilities,
     sent: Arc<Mutex<Vec<Message>>>,
     incoming: Mutex<mpsc::Receiver<Event>>,
 }
@@ -27,6 +29,7 @@ impl MockAdapter {
             Self {
                 name: name.into(),
                 self_user: User::new("mock-bot"),
+                capabilities: Capabilities::SEND_MESSAGES,
                 sent: sent.clone(),
                 incoming: Mutex::new(rx),
             },
@@ -43,6 +46,10 @@ impl Adapter for MockAdapter {
 
     fn self_user(&self) -> User {
         self.self_user.clone()
+    }
+
+    fn capabilities(&self) -> Capabilities {
+        self.capabilities
     }
 
     async fn start(&self, events: EventSender) -> Result<()> {

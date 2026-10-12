@@ -47,6 +47,7 @@ use tokio_tungstenite::{connect_async, tungstenite::Message as WsMessage};
 use asanagi::{
     Error, Result,
     adapter::{Adapter, EventSender},
+    capabilities::Capabilities,
     model::{Attachment, Event, Message, User},
 };
 
@@ -150,6 +151,16 @@ impl Adapter for OneBotAdapter {
         tokio::task::block_in_place(|| futures::executor::block_on(self.self_user.read()))
             .clone()
             .unwrap_or_else(|| User::new("onebot-self").with_is_bot(true))
+    }
+
+    fn capabilities(&self) -> Capabilities {
+        Capabilities::from_capabilities(&[
+            Capabilities::SEND_MESSAGES,
+            Capabilities::EDIT_MESSAGES,
+            Capabilities::DELETE_MESSAGES,
+            Capabilities::ADD_REACTIONS,
+            Capabilities::REMOVE_REACTIONS,
+        ])
     }
 
     async fn start(&self, events: EventSender) -> Result<()> {
