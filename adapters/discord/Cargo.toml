@@ -1,0 +1,19 @@
+[package]
+name = "asanagi-discord"
+description = "Discord adapter for Asanagi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+asanagi = { path = "../.." }
+async-trait.workspace = true
+serenity = { version = "0.12", default-features = false, features = [
+    "builder",
+    "client",
+    "gateway",
+    "http",
+    "model",
+    "rustls_backend",
+] }
+tokio.workspace = true
